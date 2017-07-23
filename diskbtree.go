@@ -31,5 +31,9 @@ func NewBTreeOnDisk(file string, bsize uint64) (*BTreeOnDisk, error) {
 	return t, err
 }
 
+func (t *BTreeOnDisk) GetBlockSize() uint64 {
+	return t.BlockSize
+}
+
 func (t *BTreeOnDisk) NewNode() {
 }

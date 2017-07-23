@@ -1,15 +1,40 @@
 package btree
 
+import (
+	"bytes"
+	"encoding/binary"
+)
+
 type Node struct {
-	pointers []uint64
-	data	 []uint64
-	tree	 *BTree
+	Pointers [101]uint64
+	Data     [100]uint64
+	tree     *BTree
 }
 
-func NewNode(t *BTree) (*Node, error) {
+type binaryNode struct {
+	Pointers [101]uint64
+	Data     [100]uint64
+}
+
+func NewNode(t BTree) (*Node, error) {
 	n := new(Node)
-	n.tree = t
+	n.tree = &t
 	return n, nil
+}
+
+func (n *Node) ToBinary() (result []byte, err error) {
+	binNode := binaryNode{
+		Pointers: n.Pointers,
+		Data:     n.Data,
+	}
+	buf := new(bytes.Buffer)
+
+	err = binary.Write(buf, binary.LittleEndian, binNode)
+	if err != nil {
+		return result, err
+	}
+
+	return buf.Bytes(), nil
 }
 
 func insertUint64at(ara []uint64, i int, val uint64) []uint64 {
