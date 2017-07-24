@@ -6,14 +6,14 @@ import (
 )
 
 type Node struct {
-	Pointers [101]uint64
-	Data     [100]uint64
+	Pointers [32]uint64
+	Data     [31]uint64
 	tree     *BTree
 }
 
 type binaryNode struct {
-	Pointers [101]uint64
-	Data     [100]uint64
+	Pointers [32]uint64
+	Data     [31]uint64
 }
 
 func NewNode(t BTree) (*Node, error) {
