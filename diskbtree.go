@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"os"
+	"fmt"
 )
 
 type BTreeOnDisk struct {
@@ -33,6 +34,10 @@ func NewBTreeOnDisk(file string, bsize uint64) (*BTreeOnDisk, error) {
 
 func (t *BTreeOnDisk) GetBlockSize() uint64 {
 	return t.BlockSize
+}
+
+func (t *BTreeOnDisk) WriteNode(n *Node) error {
+	return fmt.Errorf("Unimplemented")
 }
 
 func (t *BTreeOnDisk) NewNode() {

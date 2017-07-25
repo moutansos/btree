@@ -3,12 +3,15 @@ package btree
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 )
 
 type Node struct {
 	Pointers [32]uint64
 	Data     [31]uint64
-	tree     *BTree
+	
+	Address  uint64
+	tree     BTree
 }
 
 type binaryNode struct {
@@ -18,7 +21,7 @@ type binaryNode struct {
 
 func NewNode(t BTree) (*Node, error) {
 	n := new(Node)
-	n.tree = &t
+	n.tree = t
 	return n, nil
 }
 
@@ -35,6 +38,14 @@ func (n *Node) ToBinary() (result []byte, err error) {
 	}
 
 	return buf.Bytes(), nil
+}
+
+func (n *Node) Write() error {
+	if n.tree != nil {
+		return n.tree.WriteNode(n)
+	} else {
+		return fmt.Errorf("There was no tree attached to this node")
+	}
 }
 
 func insertUint64at(ara []uint64, i int, val uint64) []uint64 {
