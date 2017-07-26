@@ -6,6 +6,8 @@ import (
 	"fmt"
 )
 
+const maxInt64 = 18446744073709551615
+
 type Node struct {
 	Pointers [32]uint64
 	Data     [31]uint64
@@ -53,5 +55,23 @@ func insertUint64at(ara []uint64, i int, val uint64) []uint64 {
 	ara = append(ara, 0)
 	copy(ara[i+1:], ara[i:])
 	ara[i] = val
+	return ara
+}
+
+func ToInt64Ara(i uint64) (ara []int64) {
+	n := i / maxInt64
+	r := i % maxInt64
+	
+	if r == 0 {
+		ara = make([]int64, n)
+	} else {
+		ara = make([]int64, n + 1)
+		ara[n] = r
+	}
+
+	for x := 0; x < n; x++ {
+		ara[x] = maxInt64
+	}
+
 	return ara
 }

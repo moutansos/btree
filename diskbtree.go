@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"os"
-	"fmt"
 )
 
 type BTreeOnDisk struct {
@@ -37,7 +36,22 @@ func (t *BTreeOnDisk) GetBlockSize() uint64 {
 }
 
 func (t *BTreeOnDisk) WriteNode(n *Node) error {
-	return fmt.Errorf("Unimplemented")
+	data, err := n.ToBinary()
+	if err != nil {
+		return err
+	}
+
+	f, err := os.Open(t.File)
+	if os.IsNotExist(err) {
+		f, err = os.Create(t.File)
+	}
+
+	if err != nil {
+		return err
+	}
+	
+	_, err = f.WriteAt(data, n.Address)
+	return err
 }
 
 func (t *BTreeOnDisk) NewNode() {
