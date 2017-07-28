@@ -26,7 +26,6 @@ func TestInsertUint64at(t *testing.T) {
 
 func TestToBinary(t *testing.T) {
 	tree := new(BTreeOnDisk)
-	tree.BlockSize = 4
 
 	n, err := NewNode(tree)
 	if err != nil {
