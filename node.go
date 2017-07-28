@@ -16,9 +16,10 @@ type Node struct {
 	tree    BTree
 }
 
-type binaryNode struct {
+type binaryNode struct { //504 bytes
 	Pointers [32]uint64
 	Data     [31]uint64
+	//TODO: Add error detection and recovery
 }
 
 func NewNode(t BTree) (*Node, error) {
