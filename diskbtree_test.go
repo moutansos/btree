@@ -45,8 +45,8 @@ func TestWriteNode(t *testing.T) {
 }
 
 func TestReadNode(t *testing.T) {
-	//f := path.Join(os.TempDir(), "test-read-node.go")
-	f := "test-read-node.bin"
+	f := path.Join(os.TempDir(), "test-read-node.go")
+	//f := "test-read-node.bin"
 
 	//Create test data in the tree
 	tree, err := NewBTreeOnDisk(f)

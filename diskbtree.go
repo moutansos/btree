@@ -13,7 +13,17 @@ type BTreeOnDisk struct {
 func NewBTreeOnDisk(file string) (t *BTreeOnDisk, err error) {
 	t = new(BTreeOnDisk)
 	t.File = file
-	return t, err
+
+	_, err = os.Stat(file)
+	if os.IsNotExist(err) {
+		return t, nil
+	}
+
+	err = os.Remove(file)
+	if err != nil {
+		return nil, err
+	}
+	return t, nil
 }
 
 func (t *BTreeOnDisk) WriteNode(n *Node) error {
@@ -50,7 +60,12 @@ func (t *BTreeOnDisk) ReadNode(address int64) (n *Node, err error) {
 	data := make([]byte, 504)
 
 	//TODO: Validate address
-	_, err = f.ReadAt(data, address)
+	_, err = f.Seek(address, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = f.Read(data)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +73,7 @@ func (t *BTreeOnDisk) ReadNode(address int64) (n *Node, err error) {
 	buf := bytes.NewBuffer(data)
 	bn := new(binaryNode)
 
-	err = binary.Write(buf, binary.LittleEndian, bn)
+	err = binary.Read(buf, binary.LittleEndian, bn)
 	if err != nil {
 		return nil, err
 	}
