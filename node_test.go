@@ -41,3 +41,24 @@ func TestToBinary(t *testing.T) {
 	}
 	//TODO: Check binary data from this method
 }
+
+func TestIsValidAddress(t *testing.T) {
+	validAddrs := []int64{0, 504, 1008, 1512}
+	invalidAddrs := []int64{-1, -4, 10, 2, 5032, 3432}
+
+	for _, addr := range validAddrs {
+		valid := IsValidAddress(addr)
+		if !valid {
+			t.Errorf("Valid node address of %v marked as invalid.")
+			return
+		}
+	}
+
+	for _, addr := range invalidAddrs {
+		valid := IsValidAddress(addr)
+		if valid {
+			t.Errorf("Invalid node address of %v marked as valid.")
+			return
+		}
+	}
+}
