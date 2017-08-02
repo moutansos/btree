@@ -5,6 +5,8 @@ import (
 	"encoding/binary"
 )
 
+// BTreeInMemory is a structure that references a b-tree structure that
+// resides in memory instead of on disk.
 type BTreeInMemory struct {
 	data []byte
 }

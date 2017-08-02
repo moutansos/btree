@@ -8,6 +8,8 @@ import (
 
 const maxInt64 = 18446744073709551615
 
+// Node is a structure that represents a node when in memory ouside the tree.
+// It is used for creating and editing nodes and is then written from there.
 type Node struct {
 	Pointers [32]int64
 	Data     [31]int64

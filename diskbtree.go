@@ -7,6 +7,8 @@ import (
 	"os"
 )
 
+// BTreeOnDisk is a structure that references a b-tree structure that
+// resides on disk instead of in memory.
 type BTreeOnDisk struct {
 	File string
 }
