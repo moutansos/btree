@@ -3,6 +3,7 @@ package btree
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"os"
 )
 
@@ -27,6 +28,10 @@ func NewBTreeOnDisk(file string) (t *BTreeOnDisk, err error) {
 }
 
 func (t *BTreeOnDisk) WriteNode(n *Node) error {
+	if !IsValidAddress(n.Address) {
+		return fmt.Errorf("Invalid address. Cannot write node at %v", n.Address)
+	}
+
 	data, err := n.ToBinary()
 	if err != nil {
 		return err
@@ -47,6 +52,10 @@ func (t *BTreeOnDisk) WriteNode(n *Node) error {
 }
 
 func (t *BTreeOnDisk) ReadNode(address int64) (n *Node, err error) {
+	if !IsValidAddress(address) {
+		return nil, fmt.Errorf("Invalid address. Cannot read node at %v", address)
+	}
+
 	f, err := os.Open(t.File)
 	if os.IsNotExist(err) {
 		return nil, err

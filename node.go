@@ -9,16 +9,16 @@ import (
 const maxInt64 = 18446744073709551615
 
 type Node struct {
-	Pointers [32]uint64
-	Data     [31]uint64
+	Pointers [32]int64
+	Data     [31]int64
 
 	Address int64
 	tree    BTree
 }
 
 type binaryNode struct { //504 bytes
-	Pointers [32]uint64
-	Data     [31]uint64
+	Pointers [32]int64
+	Data     [31]int64
 	//TODO: Add error detection and recovery
 }
 

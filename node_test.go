@@ -32,8 +32,8 @@ func TestToBinary(t *testing.T) {
 		t.Error(err)
 	}
 
-	n.Data = [31]uint64{23, 67, 78, 89}
-	n.Pointers = [32]uint64{1, 2, 3, 4, 5}
+	n.Data = [31]int64{23, 67, 78, 89}
+	n.Pointers = [32]int64{1, 2, 3, 4, 5}
 
 	_, err = n.ToBinary()
 	if err != nil {
