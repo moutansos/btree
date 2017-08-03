@@ -22,6 +22,7 @@ type binaryNode struct { //504 bytes
 	Pointers [32]int64
 	Data     [31]int64
 	//TODO: Add error detection and recovery
+	//TODO: Change data type to index type that contains the index and the pointer to the data
 }
 
 func NewNode(t BTree) (*Node, error) {
