@@ -52,6 +52,22 @@ func (n *Node) Write() error {
 	return fmt.Errorf("There was no tree attached to this node")
 }
 
+func (n *Node) IsEmpty() bool {
+	for _, p := range n.Pointers {
+		if p != 0 {
+			return false
+		}
+	}
+
+	for _, d := range n.Data {
+		if d != 0 {
+			return false
+		}
+	}
+
+	return true
+}
+
 func IsValidAddress(addr int64) bool {
 	if addr >= 0 && addr%504 == 0 {
 		return true
@@ -59,7 +75,7 @@ func IsValidAddress(addr int64) bool {
 	return false
 }
 
-func insertUint64at(ara []uint64, i int, val uint64) []uint64 {
+func insertInt64at(ara []int64, i int, val int64) []int64 {
 	// https://github.com/golang/go/wiki/SliceTricks
 	ara = append(ara, 0)
 	copy(ara[i+1:], ara[i:])

@@ -12,9 +12,9 @@ func TestNewNode(t *testing.T) {
 	}
 }
 
-func TestInsertUint64at(t *testing.T) {
-	ara := []uint64{23, 45, 56, 78, 9}
-	ara = insertUint64at(ara, 1, 67)
+func TestInsertInt64at(t *testing.T) {
+	ara := []int64{23, 45, 56, 78, 9}
+	ara = insertInt64at(ara, 1, 67)
 	if ara[1] != 67 {
 		t.Error("Invalid value at the insertion point")
 	} else if ara[0] != 23 {
@@ -60,5 +60,32 @@ func TestIsValidAddress(t *testing.T) {
 			t.Errorf("Invalid node address of %v marked as valid.")
 			return
 		}
+	}
+}
+
+func TestIsEmptyNode(t *testing.T) {
+	tree := new(BTreeOnDisk)
+	n, err := NewNode(tree)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !n.IsEmpty() {
+		t.Error("The node is supposed to be empty and is not!")
+	}
+
+	n.Pointers[0] = 32
+
+	if n.IsEmpty() {
+		t.Error("The node is supposed to have value and IsEmpty() returned that it it does not!")
+	} else {
+		//Undo for data portion of the test
+		n.Pointers[0] = 0
+	}
+
+	n.Data[15] = 3253
+
+	if n.IsEmpty() {
+		t.Error("The node is supposed to have value and IsEmpty() returned that it does not!")
 	}
 }
