@@ -68,7 +68,7 @@ func (t *BTreeOnDisk) ReadNode(address int64) (n *Node, err error) {
 		return nil, err
 	}
 
-	data := make([]byte, 504)
+	data := make([]byte, 752)
 
 	//TODO: Validate address
 	_, err = f.Seek(address, 0)

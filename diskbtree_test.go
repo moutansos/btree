@@ -35,7 +35,7 @@ func TestWriteNode(t *testing.T) {
 	}
 	n.Pointers[0] = 1
 	n.Pointers[1] = 2
-	n.Data[0] = 423
+	n.Data[0] = Index{Key: 34, Pointer: 423}
 
 	err = n.Write()
 	if err != nil {
@@ -45,8 +45,8 @@ func TestWriteNode(t *testing.T) {
 }
 
 func TestReadNode(t *testing.T) {
-	f := path.Join(os.TempDir(), "test-read-node.go")
-	//f := "test-read-node.bin"
+	//f := path.Join(os.TempDir(), "test-read-node.go")
+	f := "test-read-node.bin"
 
 	//Create test data in the tree
 	tree, err := NewBTreeOnDisk(f)
@@ -58,7 +58,7 @@ func TestReadNode(t *testing.T) {
 		t.Error(err)
 	}
 
-	n.Data[0] = 332
+	n.Data[0] = Index{Key: 2, Pointer: 345}
 	n.Pointers[0] = 1
 	n.Pointers[1] = 2
 
@@ -74,8 +74,8 @@ func TestReadNode(t *testing.T) {
 		t.Error(err)
 	} else if rn.Address != 0 {
 		t.Errorf("Invalid address %v given by the read function. Expected 0", rn.Address)
-	} else if rn.Data[0] != 332 {
-		t.Errorf("Invalid data %v given by the read function at index 0. Expected 332", rn.Data[0])
+	} else if rn.Data[0].Key != 2 && rn.Data[0].Pointer != 345 {
+		t.Errorf("Invalid data %v given by the read function at index 0. Expected Key: 2 and Pointer 345", rn.Data[0])
 	} else if rn.Pointers[0] != 1 {
 		t.Errorf("Invalid pointer %v given by the read function. Expected 1", rn.Pointers[0])
 	} else if rn.Pointers[1] != 2 {

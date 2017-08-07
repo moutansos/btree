@@ -12,16 +12,15 @@ const maxInt64 = 18446744073709551615
 // It is used for creating and editing nodes and is then written from there.
 type Node struct {
 	Pointers [32]int64
-	Data     [31]int64
+	Data     [31]Index
 
 	Address int64
 	tree    BTree
 }
 
-type binaryNode struct { //504 bytes
+type binaryNode struct { //752 bytes
 	Pointers [32]int64
-	Data     [31]int64
-	//TODO: Add error detection and recovery
+	Data     [31]Index
 	//TODO: Change data type to index type that contains the index and the pointer to the data
 }
 
@@ -61,7 +60,7 @@ func (n *Node) IsEmpty() bool {
 	}
 
 	for _, d := range n.Data {
-		if d != 0 {
+		if !d.isEmptyOrDefault() {
 			return false
 		}
 	}
@@ -70,7 +69,7 @@ func (n *Node) IsEmpty() bool {
 }
 
 func IsValidAddress(addr int64) bool {
-	if addr >= 0 && addr%504 == 0 {
+	if addr >= 0 && addr%752 == 0 {
 		return true
 	}
 	return false
