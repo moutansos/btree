@@ -13,6 +13,9 @@ type BTreeOnDisk struct {
 	File string
 }
 
+// NewBTreeOnDisk creates a new b-tree that resides on disk. The
+// structure uses internal pointers to bytes in the file. It uses
+// these to work like memory pointers.
 func NewBTreeOnDisk(file string) (t *BTreeOnDisk, err error) {
 	t = new(BTreeOnDisk)
 	t.File = file
@@ -29,6 +32,9 @@ func NewBTreeOnDisk(file string) (t *BTreeOnDisk, err error) {
 	return t, nil
 }
 
+// WriteNode writes the specified node to disk. It takes a single
+// parameter node. It uses the address inside the n *Node parameter
+// and confirms that it is a valid pointer.
 func (t *BTreeOnDisk) WriteNode(n *Node) error {
 	if !IsValidAddress(n.Address) {
 		return fmt.Errorf("Invalid address. Cannot write node at %v", n.Address)
@@ -53,6 +59,10 @@ func (t *BTreeOnDisk) WriteNode(n *Node) error {
 	return err
 }
 
+// ReadNode reads the node from disk. The parameter takes a positive
+// integer and returns an error if the address is invalid. The function
+// returns two parameters n *Node which is the node and err of type
+// error.
 func (t *BTreeOnDisk) ReadNode(address int64) (n *Node, err error) {
 	if !IsValidAddress(address) {
 		return nil, fmt.Errorf("Invalid address. Cannot read node at %v", address)
@@ -96,6 +106,8 @@ func (t *BTreeOnDisk) ReadNode(address int64) (n *Node, err error) {
 	return n, nil
 }
 
+// NewNode calls the standalone NewNode function and gives it the
+// calling binary tree.
 func (t *BTreeOnDisk) NewNode() (n *Node, err error) {
 	return NewNode(t)
 }
