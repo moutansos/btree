@@ -111,3 +111,18 @@ func (t *BTreeOnDisk) ReadNode(address int64) (n *Node, err error) {
 func (t *BTreeOnDisk) NewNode() (n *Node, err error) {
 	return NewNode(t)
 }
+
+func (t *BTreeOnDisk) NextNodeAddress() (int64, error) {
+	stat, err := os.Stat(t.File)
+	if os.IsNotExist(err) {
+		return 0, nil
+	} else if err != nil {
+		return -1, err
+	}
+
+	addr := stat.Size()
+	if IsValidAddress(addr) {
+		return addr, nil
+	}
+	return -1, fmt.Errorf("the address %v was invalid and indicates a corrupt b-tree structure", addr)
+}

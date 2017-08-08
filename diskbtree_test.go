@@ -45,8 +45,8 @@ func TestWriteNode(t *testing.T) {
 }
 
 func TestReadNode(t *testing.T) {
-	//f := path.Join(os.TempDir(), "test-read-node.go")
-	f := "test-read-node.bin"
+	f := path.Join(os.TempDir(), "test-read-node.bin")
+	//f := "test-read-node.bin"
 
 	//Create test data in the tree
 	tree, err := NewBTreeOnDisk(f)
@@ -80,5 +80,34 @@ func TestReadNode(t *testing.T) {
 		t.Errorf("Invalid pointer %v given by the read function. Expected 1", rn.Pointers[0])
 	} else if rn.Pointers[1] != 2 {
 		t.Errorf("Invalid pointer %v given by the read function. Expected 2", rn.Pointers[1])
+	}
+}
+
+func TestNextNodeAddress(t *testing.T) {
+	f := path.Join(os.TempDir(), "test-next-node-address.bin")
+	//f := "test-next-node-address.bin"
+
+	//Create test data in the tree
+	tree, err := NewBTreeOnDisk(f)
+	if err != nil {
+		t.Error(err)
+	}
+	n, err := tree.NewNode()
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = n.Write()
+	if err != nil {
+		t.Error(err)
+	}
+
+	addr, err := tree.NextNodeAddress()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if addr != 752 {
+		t.Errorf("The address of %v is invalid. Expected 572", addr)
 	}
 }
