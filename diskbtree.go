@@ -109,8 +109,13 @@ func (t *BTreeOnDisk) ReadNode(address int64) (n *Node, err error) {
 // NewNode calls the standalone NewNode function and gives it the
 // calling binary tree.
 func (t *BTreeOnDisk) NewNode() (n *Node, err error) {
-	//TODO: Use NextNodeAddress() here
-	return NewNode(t)
+	addr, err := t.NextNodeAddress()
+	if err != nil {
+		return nil, err
+	}
+	n, err = NewNode(t)
+	n.Address = addr
+	return n, err
 }
 
 func (t *BTreeOnDisk) NextNodeAddress() (int64, error) {
