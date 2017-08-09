@@ -110,4 +110,35 @@ func TestNextNodeAddress(t *testing.T) {
 	if addr != 752 {
 		t.Errorf("The address of %v is invalid. Expected 572", addr)
 	}
+} 
+
+func TestNextNodeAddressNewNodes(t *testing.T) {
+	f := path.Join(os.TempDir(), "test-next-node-address-new-node.bin")
+	//f := "test-next-node-address-new-node.bin"
+	
+	tree, err := NewBTreeOnDisk(f)
+	if err != nil {
+		t.Error(err)
+	}
+	n1, err := tree.NewNode()
+	if err != nil {
+		t.Error(err)
+	} else if n1.Address != 0 {
+		t.Errorf("Invalid address on first node. Expected 0 and got %v", n1.Address)
+	}
+	err = n1.Write()
+	if err != nil {
+		t.Error(err)
+	}
+
+	n2, err := tree.NewNode()
+	if err != nil {
+		t.Error(err)
+	} else if n2.Address != 752 {
+		t.Errorf("Invalid address on first node. Expected 752 and got %v", n2.Address)
+	}
+	err = n1.Write()
+	if err != nil {
+		t.Error(err)
+	}
 }
