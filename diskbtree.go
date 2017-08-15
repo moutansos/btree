@@ -106,6 +106,20 @@ func (t *BTreeOnDisk) ReadNode(address int64) (n *Node, err error) {
 	return n, nil
 }
 
+func (t *BTreeOnDisk) RemoveNode(addr int64) (err error) {
+	if !IsValidAddress(addr) {
+		return fmt.Errorf("the provided address of %v is invalid")
+	}
+
+	f, err := os.Open(t.File)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	return nil
+}
+
 // NewNode calls the standalone NewNode function and gives it the
 // calling binary tree.
 func (t *BTreeOnDisk) NewNode() (n *Node, err error) {

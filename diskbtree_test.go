@@ -44,6 +44,22 @@ func TestWriteNode(t *testing.T) {
 	}
 }
 
+func TestRemoveNode(t *testing.T) {
+	f := path.Join(os.TempDir(), "test-remove-node.bin")
+	//f := "test-remove-node.bin"
+
+	//Create test data in the tree
+	tree, err := NewBTreeOnDisk(f)
+	if err != nil {
+		t.Error(err)
+	}
+	
+	err = tree.RemoveNode(0)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
 func TestReadNode(t *testing.T) {
 	f := path.Join(os.TempDir(), "test-read-node.bin")
 	//f := "test-read-node.bin"
