@@ -53,7 +53,17 @@ func TestRemoveNode(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	
+
+	n, err := tree.NewNode()
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = n.Write()
+	if err != nil {
+		t.Error(err)
+	}
+
 	err = tree.RemoveNode(0)
 	if err != nil {
 		t.Error(err)
