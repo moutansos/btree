@@ -117,6 +117,16 @@ func (t *BTreeOnDisk) RemoveNode(addr int64) (err error) {
 	}
 	defer f.Close()
 
+	info, err := f.Stat()
+	if err != nil {
+		return err
+	}
+
+	treeSize := info.Size()
+	if addr > treeSize {
+		return fmt.Errorf("The provided address is larger than the tree")
+	}
+
 	return nil
 }
 
