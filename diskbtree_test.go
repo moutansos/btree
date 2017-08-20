@@ -58,6 +58,10 @@ func TestRemoveNode(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+	n.Data[0] = Index{
+		Key:     1,
+		Pointer: 214,
+	}
 
 	err = n.Write()
 	if err != nil {
@@ -136,12 +140,12 @@ func TestNextNodeAddress(t *testing.T) {
 	if addr != 752 {
 		t.Errorf("The address of %v is invalid. Expected 572", addr)
 	}
-} 
+}
 
 func TestNextNodeAddressNewNodes(t *testing.T) {
 	f := path.Join(os.TempDir(), "test-next-node-address-new-node.bin")
 	//f := "test-next-node-address-new-node.bin"
-	
+
 	tree, err := NewBTreeOnDisk(f)
 	if err != nil {
 		t.Error(err)

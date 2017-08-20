@@ -108,7 +108,7 @@ func (t *BTreeOnDisk) ReadNode(address int64) (n *Node, err error) {
 
 func (t *BTreeOnDisk) RemoveNode(addr int64) (err error) {
 	if !IsValidAddress(addr) {
-		return fmt.Errorf("the provided address of %v is invalid")
+		return fmt.Errorf("the provided address of %v is invalid", addr)
 	}
 
 	f, err := os.Open(t.File)
@@ -127,7 +127,15 @@ func (t *BTreeOnDisk) RemoveNode(addr int64) (err error) {
 		return fmt.Errorf("The provided address is larger than the tree")
 	}
 
-	return nil
+	blankNode, err := t.NewNode()
+	if err != nil {
+		return err
+	}
+	blankNode.Address = addr
+	return blankNode.Write()
+
+	//TODO: Write out the address of the removed node so the database
+	//		can reuse that space
 }
 
 // NewNode calls the standalone NewNode function and gives it the
@@ -143,6 +151,7 @@ func (t *BTreeOnDisk) NewNode() (n *Node, err error) {
 }
 
 func (t *BTreeOnDisk) NextNodeAddress() (int64, error) {
+	// TODO: Check for empty space from removed nodes
 	stat, err := os.Stat(t.File)
 	if os.IsNotExist(err) {
 		return 0, nil
