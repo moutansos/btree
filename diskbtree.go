@@ -10,7 +10,8 @@ import (
 // BTreeOnDisk is a structure that references a b-tree structure that
 // resides on disk instead of in memory.
 type BTreeOnDisk struct {
-	File string
+	File               string
+	AvailableAddresses []int64 //TODO: Integrate all the new node methods with this variable
 }
 
 // NewBTreeOnDisk creates a new b-tree that resides on disk. The
@@ -150,6 +151,15 @@ func (t *BTreeOnDisk) NewNode() (n *Node, err error) {
 	return n, err
 }
 
+func (t *BTreeOnDisk) AddressIsAvailable(addr int64) (available bool, err error) {
+	for _, e := range t.AvailableAddresses {
+		if e == addr {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
 func (t *BTreeOnDisk) NextNodeAddress() (int64, error) {
 	// TODO: Check for empty space from removed nodes
 	stat, err := os.Stat(t.File)
@@ -164,4 +174,34 @@ func (t *BTreeOnDisk) NextNodeAddress() (int64, error) {
 		return addr, nil
 	}
 	return -1, fmt.Errorf("the address %v was invalid and indicates a corrupt b-tree structure", addr)
+}
+
+func (t *BTreeOnDisk) UpdateAvailableAddresess() (err error) {
+	//TODO: Write test method
+	stat, err := os.Stat(t.File)
+	if os.IsNotExist(err) {
+		return nil
+	} else if err != nil {
+		return err
+	}
+
+	size := stat.Size()
+
+	var i int64
+	for i = 0; i < size; i = i + 752 { //Iterate through every node
+		n, err := t.ReadNode(i)
+		if err != nil {
+			return err
+		}
+
+		isAvailable, err := t.AddressIsAvailable(i)
+		if err != nil {
+			return fmt.Errorf("unable to check for available address")
+		}
+
+		if n.IsEmpty() && !isAvailable {
+			t.AvailableAddresses = append(t.AvailableAddresses, i)
+		}
+	}
+	return nil
 }
