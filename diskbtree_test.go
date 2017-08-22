@@ -172,3 +172,76 @@ func TestNextNodeAddressNewNodes(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestUpdateAvailableAddress(t *testing.T) {
+	f := path.Join(os.TempDir(), "test-update-available-addresess.bin")
+	//f := "test-update-available-addresess.bin"
+
+	//Create test data in the tree
+	tree, err := NewBTreeOnDisk(f)
+	if err != nil {
+		t.Error(err)
+	}
+
+	var nodes [3]*Node
+	nodes[0], err = tree.NewNode()
+	if err != nil {
+		t.Error(err)
+	}
+	nodes[0].Data[0] = Index{
+		Key:     23,
+		Pointer: 564,
+	}
+	nodes[0].Pointers[0] = 234
+	nodes[0].Pointers[0] = 345
+
+	nodes[1], err = tree.NewNode()
+	if err != nil {
+		t.Error(err)
+	}
+	nodes[1].Data[0] = Index{
+		Key:     67,
+		Pointer: 563,
+	}
+	nodes[1].Pointers[0] = 23324
+	nodes[1].Pointers[0] = 3543
+
+	nodes[2], err = tree.NewNode()
+	if err != nil {
+		t.Error(err)
+	}
+	nodes[2].Data[0] = Index{
+		Key:     23,
+		Pointer: 564,
+	}
+	nodes[2].Pointers[0] = 234
+	nodes[2].Pointers[0] = 345
+
+	for _, n := range nodes {
+		addr, err := tree.NextNodeAddress()
+		if err != nil {
+			t.Error(err)
+		}
+
+		n.Address = addr
+		err = n.Write()
+		if err != nil {
+			t.Error(err)
+		}
+	}
+
+	err = tree.RemoveNode(nodes[1].Address)
+	if err != nil {
+		t.Error(err)
+	}
+
+	//Finished setup - testing
+	err = tree.UpdateAvailableAddresess()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if tree.AvailableAddresses[0] != 752 {
+		t.Error("the UpdateAvailableAddress function has not found the empty node.")
+	}
+}
