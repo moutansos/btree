@@ -245,3 +245,76 @@ func TestUpdateAvailableAddress(t *testing.T) {
 		t.Error("the UpdateAvailableAddress function has not found the empty node.")
 	}
 }
+
+func TestQueryIndex(t *testing.T) {
+	f := path.Join(os.TempDir(), "test-query-index.bin")
+	//f := "test-query-index.bin"
+
+	//Create test data in the tree
+	tree, err := NewBTreeOnDisk(f)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	n1, err := tree.NewNode()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	n1.Pointers[0] = 0
+	n1.Data[0] = Index{Key: 25, Pointer: 21}
+	n1.Pointers[1] = 0
+	n1.Data[1] = Index{Key: 34, Pointer: 22}
+	n1.Pointers[2] = 752
+	n1.Data[2] = Index{Key: 78, Pointer: 23}
+	n1.Pointers[3] = 0
+	err = n1.Write()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	n2, err := tree.NewNode()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	n2.Pointers[0] = 0
+	n2.Data[0] = Index{Key: 35, Pointer: 24}
+	n2.Pointers[1] = 0
+	n2.Data[1] = Index{Key: 51, Pointer: 25}
+	n2.Pointers[2] = 0
+	n2.Data[2] = Index{Key: 62, Pointer: 26}
+	n2.Pointers[3] = 1504
+	err = n2.Write()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	n3, err := tree.NewNode()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	n3.Pointers[0] = 0
+	n3.Data[0] = Index{Key: 63, Pointer: 24}
+	n3.Pointers[1] = 0
+	n3.Data[1] = Index{Key: 64, Pointer: 25}
+	n3.Pointers[2] = 0
+	n3.Data[2] = Index{Key: 70, Pointer: 26} //The target value
+	n3.Pointers[3] = 0
+	err = n3.Write()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	index, err := tree.QueryIndex(70)
+	if index.Key != 70 {
+		t.Errorf("the query function returned the wrong key of %v. Expected 70", index.Key)
+	} else if index.Pointer != 26 {
+		t.Errorf("the query function returned the wrong pointer of %v. Expected 26", index.Pointer)
+	}
+}

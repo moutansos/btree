@@ -68,6 +68,43 @@ func (n *Node) IsEmpty() bool {
 	return true
 }
 
+func (n *Node) query(key uint64) (index *Index, err error) {
+	for i, d := range n.Data {
+		if key < d.Key {
+			nn, err := n.readLeftPtr(i)
+			if err != nil {
+				return nil, err
+			}
+			return nn.query(key)
+		} else if (n.Data[i+1].isEmptyOrDefault() || len(n.Data) == i+1) && key > d.Key {
+			nn, err := n.readRightPtr(i)
+			if err != nil {
+				return nil, err
+			}
+			return nn.query(key)
+		} else if key == d.Key {
+			return &d, nil
+		}
+	}
+	return nil, fmt.Errorf("The key was not found in the b-tree")
+}
+
+func (n *Node) readLeftPtr(index int) (newNode *Node, err error) {
+	ptr := n.Pointers[index]
+	if ptr != 0 {
+		newNode, err = n.tree.ReadNode(ptr)
+		if err != nil {
+			return nil, err
+		}
+		return newNode, err
+	}
+	return nil, fmt.Errorf("The key was not found. Pointer unreferenced.")
+}
+
+func (n *Node) readRightPtr(index int) (newNode *Node, err error) {
+	return n.readLeftPtr(index + 1)
+}
+
 func IsValidAddress(addr int64) bool {
 	if addr >= 0 && addr%752 == 0 {
 		return true

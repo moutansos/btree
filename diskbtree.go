@@ -104,6 +104,7 @@ func (t *BTreeOnDisk) ReadNode(address int64) (n *Node, err error) {
 	n.Pointers = bn.Pointers
 	n.Data = bn.Data
 	n.Address = address
+	n.tree = t
 	return n, nil
 }
 
@@ -204,4 +205,12 @@ func (t *BTreeOnDisk) UpdateAvailableAddresess() (err error) {
 		}
 	}
 	return nil
+}
+
+func (t *BTreeOnDisk) QueryIndex(key uint64) (index *Index, err error) {
+	n, err := t.ReadNode(0)
+	if !n.IsEmpty() {
+		return n.query(key)
+	}
+	return nil, fmt.Errorf("the b-tree is empty")
 }
