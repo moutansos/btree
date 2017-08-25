@@ -89,6 +89,20 @@ func (n *Node) query(key uint64) (index *Index, err error) {
 	return nil, fmt.Errorf("The key was not found in the b-tree")
 }
 
+func (n *Node) insert(i *Index) (err error) {
+	//TODO: Look into equations for managing b-tree height and inserting nodes into the
+	//		tree in such a way that it doesn't turned into a list of linked arrays
+	return nil
+}
+
+func (n *Node) nodeIsFull() bool {
+	//Just check the last data point. If it is not zero then it is full
+	if n.Data[len(n.Data)-1].Key != 0 {
+		return true
+	}
+	return false
+}
+
 func (n *Node) readLeftPtr(index int) (newNode *Node, err error) {
 	ptr := n.Pointers[index]
 	if ptr != 0 {
@@ -98,7 +112,7 @@ func (n *Node) readLeftPtr(index int) (newNode *Node, err error) {
 		}
 		return newNode, err
 	}
-	return nil, fmt.Errorf("The key was not found. Pointer unreferenced.")
+	return nil, fmt.Errorf("the key was not found, the pointer was not referenced")
 }
 
 func (n *Node) readRightPtr(index int) (newNode *Node, err error) {

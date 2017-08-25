@@ -1,6 +1,7 @@
 package btree
 
 import (
+	"math/rand"
 	"testing"
 )
 
@@ -92,5 +93,29 @@ func TestIsEmptyNode(t *testing.T) {
 
 	if n.IsEmpty() {
 		t.Error("The node is supposed to have value and IsEmpty() returned that it does not!")
+	}
+}
+
+func TestNodeIsFull(t *testing.T) {
+	tree := new(BTreeOnDisk)
+	n, err := NewNode(tree)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if n.nodeIsFull() {
+		t.Error("node is empty but reports as full")
+	}
+
+	//Seed data
+	for i := 0; i < len(n.Data); i++ {
+		n.Data[i].Key = rand.Uint64()
+		for n.Data[i].Key == 0 {
+			n.Data[i].Key = rand.Uint64()
+		}
+	}
+
+	if !n.nodeIsFull() {
+		t.Error("node is full but reports as not full")
 	}
 }
