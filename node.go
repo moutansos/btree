@@ -92,7 +92,34 @@ func (n *Node) query(key uint64) (index *Index, err error) {
 func (n *Node) insert(i *Index) (err error) {
 	//TODO: Look into equations for managing b-tree height and inserting nodes into the
 	//		tree in such a way that it doesn't turned into a list of linked arrays
-	return nil
+	return fmt.Errorf("unimplemented")
+}
+
+// Only run on nodes that are full
+func (n *Node) splitIntoTwoSubnodes() (new *Node, err error) {
+	return nil, fmt.Errorf("unimplimented")
+}
+
+func (n *Node) findMedianDataPoints() (leftIndex int, rightIndex int, err error) {
+	size := n.size()
+	if size < 2 {
+		return -1, -1, fmt.Errorf("the b-tree only had %v elements, no median data points exist", size)
+	}
+
+	rightIndex = size / 2
+	leftIndex = rightIndex - 1
+
+	return leftIndex, rightIndex, nil
+}
+
+func (n *Node) size() int { //TODO: Write test
+	for i, el := range n.Data {
+		if el.Key == 0 {
+			return i
+		}
+	}
+
+	return len(n.Data)
 }
 
 func (n *Node) nodeIsFull() bool {

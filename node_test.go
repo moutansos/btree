@@ -119,3 +119,60 @@ func TestNodeIsFull(t *testing.T) {
 		t.Error("node is full but reports as not full")
 	}
 }
+
+func TestNodeSize(t *testing.T) {
+	tree := new(BTreeOnDisk)
+	n, err := NewNode(tree)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if n.size() != 0 {
+		t.Errorf("node size should be zero but is actually %v", n.size())
+	}
+
+	n.Data[0] = Index{Key: 324, Pointer: 2}
+	n.Data[1] = Index{Key: 325, Pointer: 2}
+	n.Data[2] = Index{Key: 327, Pointer: 2}
+	n.Data[3] = Index{Key: 343, Pointer: 2}
+
+	if n.size() != 4 {
+		t.Errorf("node size should be 4 but is actually %v", n.size())
+	}
+}
+
+func TestFindMedianDataPoints(t *testing.T) {
+	tree := new(BTreeOnDisk)
+	n, err := NewNode(tree)
+	if err != nil {
+		t.Error(err)
+	}
+
+	n.Data[0] = Index{Key: 324, Pointer: 2}
+	n.Data[1] = Index{Key: 325, Pointer: 2}
+	n.Data[2] = Index{Key: 327, Pointer: 2}
+	n.Data[3] = Index{Key: 343, Pointer: 2}
+
+	left, right, err := n.findMedianDataPoints()
+	if err != nil {
+		t.Error(err)
+	} else if left != 1 {
+		t.Errorf("was expecting 1 for the left data point, got %v", left)
+	} else if right != 2 {
+		t.Errorf("was expecting 2 for the right data point, got %v", right)
+	}
+
+	//Check on an odd number of elements
+
+	n.Data[4] = Index{Key: 432, Pointer: 2}
+	n.Data[5] = Index{Key: 463, Pointer: 2}
+	n.Data[6] = Index{Key: 784, Pointer: 2}
+	left, right, err = n.findMedianDataPoints()
+	if err != nil {
+		t.Error(err)
+	} else if left != 2 {
+		t.Errorf("was expecting 2 for the left data point, got %v", left)
+	} else if right != 3 {
+		t.Errorf("was expecting 3 for the right data point, got %v", right)
+	}
+}
