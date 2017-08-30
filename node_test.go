@@ -153,13 +153,11 @@ func TestFindMedianDataPoints(t *testing.T) {
 	n.Data[2] = Index{Key: 327, Pointer: 2}
 	n.Data[3] = Index{Key: 343, Pointer: 2}
 
-	left, right, err := n.findMedianDataPoints()
+	median, err := n.findMedianDataPoint()
 	if err != nil {
 		t.Error(err)
-	} else if left != 1 {
-		t.Errorf("was expecting 1 for the left data point, got %v", left)
-	} else if right != 2 {
-		t.Errorf("was expecting 2 for the right data point, got %v", right)
+	} else if median != 2 {
+		t.Errorf("was expecting 2 for the median data point, got %v", median)
 	}
 
 	//Check on an odd number of elements
@@ -167,12 +165,10 @@ func TestFindMedianDataPoints(t *testing.T) {
 	n.Data[4] = Index{Key: 432, Pointer: 2}
 	n.Data[5] = Index{Key: 463, Pointer: 2}
 	n.Data[6] = Index{Key: 784, Pointer: 2}
-	left, right, err = n.findMedianDataPoints()
+	median, err = n.findMedianDataPoint()
 	if err != nil {
 		t.Error(err)
-	} else if left != 2 {
-		t.Errorf("was expecting 2 for the left data point, got %v", left)
-	} else if right != 3 {
-		t.Errorf("was expecting 3 for the right data point, got %v", right)
+	} else if median != 3 {
+		t.Errorf("was expecting 3 for the median point, got %v", median)
 	}
 }

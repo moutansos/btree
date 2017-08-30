@@ -97,19 +97,41 @@ func (n *Node) insert(i *Index) (err error) {
 
 // Only run on nodes that are full
 func (n *Node) splitIntoTwoSubnodes() (new *Node, err error) {
+	leftNode, err := n.tree.NewNode()
+	if err != nil {
+		return nil, err
+	}
+	rightNode, err := n.tree.NewNode()
+	if err != nil {
+		return nil, err
+	}
+
+	median, err := n.findMedianDataPoint()
+	if err != nil {
+		return nil, err
+	}
+
+	//Copy the values to the left node
+	for i, e := range n.Data[:median] {
+		leftNode.Data[i] = e
+		//leftNode.Pointers[]
+	}
+
+	for i, e := range n.Data[median+1:] {
+		rightNode.Data[i] = e
+	}
 	return nil, fmt.Errorf("unimplimented")
 }
 
-func (n *Node) findMedianDataPoints() (leftIndex int, rightIndex int, err error) {
+func (n *Node) findMedianDataPoint() (medianIndex int, err error) {
 	size := n.size()
-	if size < 2 {
-		return -1, -1, fmt.Errorf("the b-tree only had %v elements, no median data points exist", size)
+	if size < 3 {
+		return -1, fmt.Errorf("the b-tree only had %v elements, no median data point exists", size)
 	}
 
-	rightIndex = size / 2
-	leftIndex = rightIndex - 1
+	medianIndex = size / 2
 
-	return leftIndex, rightIndex, nil
+	return medianIndex, nil
 }
 
 func (n *Node) size() int { //TODO: Write test
