@@ -97,30 +97,57 @@ func (n *Node) insert(i *Index) (err error) {
 
 // Only run on nodes that are full
 func (n *Node) splitIntoTwoSubnodes() (new *Node, err error) {
-	leftNode, err := n.tree.NewNode()
-	if err != nil {
-		return nil, err
-	}
-	rightNode, err := n.tree.NewNode()
-	if err != nil {
-		return nil, err
-	}
-
 	median, err := n.findMedianDataPoint()
 	if err != nil {
 		return nil, err
 	}
 
 	//Copy the values to the left node
-	for i, e := range n.Data[:median] {
-		leftNode.Data[i] = e
-		//leftNode.Pointers[]
+	leftNode, err := n.tree.NewNode()
+	if err != nil {
+		return nil, err
 	}
 
-	for i, e := range n.Data[median+1:] {
-		rightNode.Data[i] = e
+	for i, e := range n.Data[:median] {
+		leftNode.Data[i] = e
+		leftNode.Pointers[i] = n.Pointers[i]
 	}
-	return nil, fmt.Errorf("unimplimented")
+	leftNode.Pointers[median] = n.Pointers[median]
+	err = leftNode.Write()
+	if err != nil {
+		return nil, err
+	}
+
+	//Copy the values to the right node
+	rightNode, err := n.tree.NewNode()
+	if err != nil {
+		return nil, err
+	}
+
+	rightNode.Pointers[0] = n.Pointers[median+1]
+	for i, e := range n.Data[median+1 : n.size()] {
+		rightNode.Data[i] = e
+		rightNode.Pointers[i+1] = n.Pointers[median+2+i]
+	}
+	err = rightNode.Write()
+	if err != nil {
+		return nil, err
+	}
+
+	//Clear the old node and assign the new subnodes
+	var medianVal = n.Data[median]
+	n.clear()
+	n.Data[0] = medianVal
+
+	n.Pointers[0] = leftNode.Address
+	n.Pointers[1] = rightNode.Address
+
+	err = n.Write()
+	if err != nil {
+		return nil, err
+	}
+
+	return n, nil
 }
 
 func (n *Node) findMedianDataPoint() (medianIndex int, err error) {
@@ -150,6 +177,17 @@ func (n *Node) nodeIsFull() bool {
 		return true
 	}
 	return false
+}
+
+func (n *Node) clear() {
+	for i, _ := range n.Data {
+		n.Data[i].Key = 0
+		n.Data[i].Pointer = 0
+	}
+
+	for i, _ := range n.Pointers {
+		n.Pointers[i] = 0
+	}
 }
 
 func (n *Node) readLeftPtr(index int) (newNode *Node, err error) {
