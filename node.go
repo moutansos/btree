@@ -90,9 +90,45 @@ func (n *Node) query(key uint64) (index *Index, err error) {
 }
 
 func (n *Node) insert(i *Index) (err error) {
-	//TODO: Look into equations for managing b-tree height and inserting nodes into the
-	//		tree in such a way that it doesn't turned into a list of linked arrays
-	return fmt.Errorf("unimplemented")
+	if n.nodeIsFull() {
+		next, err := n.splitIntoTwoSubnodes()
+		if err != nil {
+			return err
+		}
+		return next.insert(i)
+	}
+
+	for x, d := range n.Data {
+		if i.Key < d.Key {
+			if n.Pointers[x] == 0 {
+				//Insert here
+				return nil
+			} else {
+				nn, err := n.readLeftPtr(x)
+				if err != nil {
+					return err
+				}
+				return nn.insert(i)
+			}
+		} else if (n.Data[x+1].isEmptyOrDefault() || len(n.Data) == x+1) && i.Key > d.Key {
+			//TODO: check this condition
+			if n.Pointers[x+1] == 0 {
+				//Insert here
+			} else {
+				nn, err := n.readRightPtr(x)
+				if err != nil {
+					return err
+				}
+				return nn.insert(i)
+			}
+		} else {
+			//Insert here
+
+			return nil
+		}
+	}
+
+	return fmt.Errorf("there was an internal logic error inserting the node")
 }
 
 // Only run on nodes that are full
