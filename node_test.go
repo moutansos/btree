@@ -16,7 +16,7 @@ func TestNewNode(t *testing.T) {
 }
 
 func TestInsertInt64at(t *testing.T) {
-	ara := []int64{23, 45, 56, 78, 9}
+	ara := [32]int64{23, 45, 56, 78, 9}
 	ara = insertInt64at(ara, 1, 67)
 	if ara[1] != 67 {
 		t.Error("Invalid value at the insertion point")

@@ -68,7 +68,7 @@ func (n *Node) IsEmpty() bool {
 	return true
 }
 
-func (n *Node) query(key uint64) (index *Index, err error) {
+func (n *Node) query(key uint64) (index *Index, err error) { //TODO: Write tests on this function
 	for i, d := range n.Data {
 		if key < d.Key {
 			nn, err := n.readLeftPtr(i)
@@ -89,46 +89,58 @@ func (n *Node) query(key uint64) (index *Index, err error) {
 	return nil, fmt.Errorf("The key was not found in the b-tree")
 }
 
-func (n *Node) insert(i *Index) (err error) {
+func (n *Node) insert(i *Index) (err error) { //TODO: Write test
 	if n.nodeIsFull() {
 		next, err := n.splitIntoTwoSubnodes()
 		if err != nil {
 			return err
 		}
 		return next.insert(i)
+	} else if n.IsEmpty() {
+		n.Data[0] = *i
+		return nil
 	}
 
 	for x, d := range n.Data {
 		if i.Key < d.Key {
-			if n.Pointers[x] == 0 {
-				//Insert here
+			//Insert or recurse if the data goes to the left of the current value
+			if n.Pointers[x] == 0 { //Insert into this node
+				n.insertThisNodeLeft(i, x)
 				return nil
-			} else {
-				nn, err := n.readLeftPtr(x)
-				if err != nil {
-					return err
-				}
-				return nn.insert(i)
 			}
+			//Recurse
+			nn, err := n.readLeftPtr(x)
+			if err != nil {
+				return err
+			}
+			return nn.insert(i)
 		} else if (n.Data[x+1].isEmptyOrDefault() || len(n.Data) == x+1) && i.Key > d.Key {
-			//TODO: check this condition
-			if n.Pointers[x+1] == 0 {
-				//Insert here
-			} else {
-				nn, err := n.readRightPtr(x)
-				if err != nil {
-					return err
-				}
-				return nn.insert(i)
+			//If the next value is empty or the end of the block, and the new value
+			// is greater than the current key, then insert or recurse
+			if n.Pointers[x+1] == 0 { //Insert into this node
+				n.insertThisNodeRight(i, x)
+				return nil
 			}
-		} else {
-			//Insert here
-
-			return nil
+			//Recurse
+			nn, err := n.readRightPtr(x)
+			if err != nil {
+				return err
+			}
+			return nn.insert(i)
 		}
 	}
 
-	return fmt.Errorf("there was an internal logic error inserting the node")
+	return fmt.Errorf("there was an internal logic error inserting into this node, key of inserting index: %v, first data key in node: %v", i.Key, n.Data[0].Key)
+}
+
+func (n *Node) insertThisNodeLeft(i *Index, o int) { //TODO: Write Test?
+	n.Data = insertIndexAt(n.Data, o, *i)
+	n.Pointers = insertInt64at(n.Pointers, o, 0)
+}
+
+func (n *Node) insertThisNodeRight(i *Index, o int) { //TODO: Write Test?
+	n.Data = insertIndexAt(n.Data, o+1, *i)
+	n.Pointers = insertInt64at(n.Pointers, o+1, 0)
 }
 
 // Only run on nodes that are full
@@ -249,9 +261,13 @@ func IsValidAddress(addr int64) bool {
 	return false
 }
 
-func insertInt64at(ara []int64, i int, val int64) []int64 {
-	// https://github.com/golang/go/wiki/SliceTricks
-	ara = append(ara, 0)
+func insertInt64at(ara [32]int64, i int, val int64) [32]int64 {
+	copy(ara[i+1:], ara[i:])
+	ara[i] = val
+	return ara
+}
+
+func insertIndexAt(ara [31]Index, i int, val Index) [31]Index { //TODO: Write test
 	copy(ara[i+1:], ara[i:])
 	ara[i] = val
 	return ara
