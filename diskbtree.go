@@ -11,7 +11,7 @@ import (
 // resides on disk instead of in memory.
 type BTreeOnDisk struct {
 	File               string
-	AvailableAddresses []int64 //TODO: Integrate all the new node methods with this variable
+	AvailableAddresses []int64
 }
 
 // NewBTreeOnDisk creates a new b-tree that resides on disk. The
@@ -163,7 +163,7 @@ func (t *BTreeOnDisk) NextNodeAddress() (int64, error) {
 		val := t.AvailableAddresses[0]
 		t.AvailableAddresses = t.AvailableAddresses[1:]
 		return val, nil
-	} //TODO: Test this behavior
+	}
 
 	stat, err := os.Stat(t.File)
 	if os.IsNotExist(err) {

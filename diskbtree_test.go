@@ -175,6 +175,21 @@ func TestNextNodeAddressNewNodes(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
+	tree.AvailableAddresses = append(tree.AvailableAddresses, 7894)
+	addr, err := tree.NextNodeAddress()
+	if err != nil {
+		t.Error(err)
+	} else if addr != 7894 {
+		t.Errorf("the next node address was %v and was supposed to be 7894", addr)
+	}
+
+	addr, err = tree.NextNodeAddress()
+	if err != nil {
+		t.Error(err)
+	} else if addr == 7894 {
+		t.Errorf("the next node address was %v was not supposed to be this value", addr)
+	}
 }
 
 func TestUpdateAvailableAddress(t *testing.T) {
