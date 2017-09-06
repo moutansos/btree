@@ -72,6 +72,10 @@ func TestRemoveNode(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
+	if tree.AvailableAddresses[0] != 0 {
+		t.Error(err)
+	}
 }
 
 func TestReadNode(t *testing.T) {

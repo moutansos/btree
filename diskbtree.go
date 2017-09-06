@@ -81,7 +81,6 @@ func (t *BTreeOnDisk) ReadNode(address int64) (n *Node, err error) {
 
 	data := make([]byte, 752)
 
-	//TODO: Validate address
 	_, err = f.Seek(address, 0)
 	if err != nil {
 		return nil, err
@@ -134,10 +133,8 @@ func (t *BTreeOnDisk) RemoveNode(addr int64) (err error) {
 		return err
 	}
 	blankNode.Address = addr
+	t.AvailableAddresses = append(t.AvailableAddresses, addr)
 	return blankNode.Write()
-
-	//TODO: Write out the address of the removed node so the database
-	//		can reuse that space
 }
 
 // NewNode calls the standalone NewNode function and gives it the
@@ -162,7 +159,12 @@ func (t *BTreeOnDisk) AddressIsAvailable(addr int64) (available bool, err error)
 }
 
 func (t *BTreeOnDisk) NextNodeAddress() (int64, error) {
-	// TODO: Check for empty space from removed nodes
+	if len(t.AvailableAddresses) > 0 {
+		val := t.AvailableAddresses[0]
+		t.AvailableAddresses = t.AvailableAddresses[1:]
+		return val, nil
+	} //TODO: Test this behavior
+
 	stat, err := os.Stat(t.File)
 	if os.IsNotExist(err) {
 		return 0, nil
