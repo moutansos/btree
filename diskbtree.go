@@ -107,6 +107,9 @@ func (t *BTreeOnDisk) ReadNode(address int64) (n *Node, err error) {
 	return n, nil
 }
 
+// RemoveNode removes a node from a b-tree structure by writing all of
+// the bytes in the section to zero. Then it adds the address of the
+// removed node to the cache of available addresses.
 func (t *BTreeOnDisk) RemoveNode(addr int64) (err error) {
 	if !IsValidAddress(addr) {
 		return fmt.Errorf("the provided address of %v is invalid", addr)
@@ -149,6 +152,8 @@ func (t *BTreeOnDisk) NewNode() (n *Node, err error) {
 	return n, err
 }
 
+// AddressIsAvailable checks the input address in the node and returns true
+// if the node at the specific address is empty and therefore available.
 func (t *BTreeOnDisk) AddressIsAvailable(addr int64) (available bool, err error) {
 	for _, e := range t.AvailableAddresses {
 		if e == addr {
