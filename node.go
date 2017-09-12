@@ -67,7 +67,7 @@ func (n *Node) IsEmpty() bool {
 	return true
 }
 
-func (n *Node) query(key uint64) (index *Index, err error) { //TODO: Write tests on this function
+func (n *Node) query(key uint64) (index *Index, err error) {
 	for i, d := range n.Data {
 		if key < d.Key {
 			nn, err := n.readLeftPtr(i)

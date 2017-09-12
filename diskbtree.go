@@ -185,7 +185,6 @@ func (t *BTreeOnDisk) NextNodeAddress() (int64, error) {
 }
 
 func (t *BTreeOnDisk) UpdateAvailableAddresess() (err error) {
-	//TODO: Write test function
 	stat, err := os.Stat(t.File)
 	if os.IsNotExist(err) {
 		return nil

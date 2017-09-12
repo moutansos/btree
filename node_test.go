@@ -242,3 +242,47 @@ func TestSplitNode(t *testing.T) {
 		t.Errorf("the left key has an invalid right pointer at index 1, expected 3490, got %v", rightNode.Pointers[2])
 	}
 }
+
+func TestQuery(t *testing.T) {
+	dir := os.TempDir()
+	f := path.Join(dir, "test-node-query.bin")
+	//f = "test-node-query.bin"
+	tree, err := NewBTreeOnDisk(f)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	n, err := tree.NewNode()
+	if err != nil {
+		t.Error(err)
+	}
+
+	n.Pointers[0] = 752
+	n.Data[0] = Index{Key: 23, Pointer: 98}
+	n.Pointers[1] = 32423
+
+	err = n.Write()
+	if err != nil {
+		t.Error(err)
+	}
+
+	n2, err := tree.NewNode()
+	if err != nil {
+		t.Error(err)
+	}
+	n2.Data[0] = Index{Key: 10, Pointer: 78}
+	n2.Data[1] = Index{Key: 12, Pointer: 93}
+
+	err = n2.Write()
+	if err != nil {
+		t.Error(err)
+	}
+
+	i, err := n.query(12)
+	if err != nil {
+		t.Error(err)
+	} else if i.Pointer != 93 {
+		t.Errorf("the returned index should have a pointer of 93 but had %v", i.Pointer)
+	}
+}
