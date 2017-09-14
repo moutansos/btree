@@ -27,6 +27,24 @@ func TestInsertInt64at(t *testing.T) {
 	}
 }
 
+func TestInsertIndexAt(t *testing.T) {
+	ara := [31]Index{
+		Index{Key: 32, Pointer: 43},
+		Index{Key: 53, Pointer: 423},
+		Index{Key: 79, Pointer: 324},
+		Index{Key: 83, Pointer: 432},
+		Index{Key: 93, Pointer: 493},
+	}
+	ara = insertIndexAt(ara, 2, Index{Key: 5, Pointer: 32})
+	if ara[1].Key != 53 {
+		t.Error("invalid value right before insertion point")
+	} else if ara[2].Key != 5 {
+		t.Error("invalid value at the insertion point")
+	} else if ara[3].Key != 79 {
+		t.Error("invalid value right after the insertion point")
+	}
+}
+
 func TestToBinary(t *testing.T) {
 	tree := new(BTreeOnDisk)
 

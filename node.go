@@ -127,6 +127,8 @@ func (n *Node) insert(i *Index) (err error) {
 				return err
 			}
 			return nn.insert(i)
+		} else if i.Key == d.Key {
+			return fmt.Errorf("the key of %v was already in the b-tree", i.Key)
 		}
 	}
 
@@ -267,7 +269,7 @@ func insertInt64at(ara [32]int64, i int, val int64) [32]int64 {
 	return ara
 }
 
-func insertIndexAt(ara [31]Index, i int, val Index) [31]Index { //TODO: Write test
+func insertIndexAt(ara [31]Index, i int, val Index) [31]Index {
 	copy(ara[i+1:], ara[i:])
 	ara[i] = val
 	return ara
