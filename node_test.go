@@ -286,3 +286,49 @@ func TestQuery(t *testing.T) {
 		t.Errorf("the returned index should have a pointer of 93 but had %v", i.Pointer)
 	}
 }
+
+func TestInsertIndex(t *testing.T) {
+	dir := os.TempDir()
+	f := path.Join(dir, "test-node-insert-index.bin")
+	//f = "test-node-insert-index.bin"
+	tree, err := NewBTreeOnDisk(f)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	n, err := tree.NewNode()
+	if err != nil {
+		t.Error(err)
+	}
+
+	i1 := Index{Key: 30, Pointer: 78}
+	err = n.insert(&i1)
+	if err != nil {
+		t.Error(err)
+	} else if n.Data[0].Key != i1.Key && n.Data[0].Pointer != i1.Pointer {
+		t.Errorf("invalid insert of the first index. Expected key of %v and pointer of %v, got key of %v and pointer of %v", i1.Key, i1.Pointer, n.Data[0].Key, n.Data[0].Pointer)
+	}
+
+	i2 := Index{Key: 45, Pointer: 89}
+	err = n.insert(&i2)
+	if err != nil {
+		t.Error(err)
+	} else if n.Data[0].Key != i1.Key && n.Data[0].Pointer != i1.Pointer {
+		t.Errorf("invalid insert of the first index. Expected key of %v and pointer of %v, got key of %v and pointer of %v", i1.Key, i1.Pointer, n.Data[0].Key, n.Data[0].Pointer)
+	} else if n.Data[1].Key != i2.Key && n.Data[1].Pointer != i2.Pointer {
+		t.Errorf("invalid insert of the second index. Expected key of %v and pointer of %v, got key of %v and pointer of %v", i2.Key, i2.Pointer, n.Data[1].Key, n.Data[1].Pointer)
+	}
+
+	i3 := Index{Key: 5, Pointer: 67}
+	err = n.insert(&i3)
+	if err != nil {
+		t.Error(err)
+	} else if n.Data[0].Key != i3.Key && n.Data[0].Pointer != i3.Pointer {
+		t.Errorf("invalid insert of the first index. Expected key of %v and pointer of %v, got key of %v and pointer of %v", i3.Key, i3.Pointer, n.Data[0].Key, n.Data[0].Pointer)
+	} else if n.Data[1].Key != i1.Key && n.Data[1].Pointer != i1.Pointer {
+		t.Errorf("invalid insert of the second index. Expected key of %v and pointer of %v, got key of %v and pointer of %v", i1.Key, i1.Pointer, n.Data[1].Key, n.Data[1].Pointer)
+	} else if n.Data[2].Key != i2.Key && n.Data[2].Pointer != i2.Pointer {
+		t.Errorf("invalid insert of the third index. Expected key of %v and pointer of %v, got key of %v and pointer of %v", i2.Key, i2.Pointer, n.Data[2].Key, n.Data[2].Pointer)
+	}
+}

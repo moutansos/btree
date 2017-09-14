@@ -88,7 +88,8 @@ func (n *Node) query(key uint64) (index *Index, err error) {
 	return nil, fmt.Errorf("The key was not found in the b-tree")
 }
 
-func (n *Node) insert(i *Index) (err error) { //TODO: Write test
+func (n *Node) insert(i *Index) (err error) {
+	//TODO: Handle if the index is already in the node then throw an error
 	if n.nodeIsFull() {
 		next, err := n.splitIntoTwoSubnodes()
 		if err != nil {
