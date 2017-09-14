@@ -23,12 +23,16 @@ type binaryNode struct { //752 bytes
 	Data     [31]Index
 }
 
+// NewNode creates a new node using the specified b-tree structure
 func NewNode(t BTree) (*Node, error) {
 	n := new(Node)
 	n.tree = t
 	return n, nil
 }
 
+// ToBinary changes this node from a in memory native structure into
+// an array of binary bytes to be written to a file or stored in a
+// block of memory.
 func (n *Node) ToBinary() (result []byte, err error) {
 	binNode := binaryNode{
 		Pointers: n.Pointers,
@@ -51,6 +55,11 @@ func (n *Node) Write() error {
 	return fmt.Errorf("There was no tree attached to this node")
 }
 
+// IsEmpty returns true if the node is empty. For speed it only
+// checks if the first data entry in the node is zero. If by some
+// error any of the other parts of the data array end up with
+// values and the first remains zero the node will be effectively
+// empty.
 func (n *Node) IsEmpty() bool {
 	for _, p := range n.Pointers {
 		if p != 0 {
@@ -89,7 +98,6 @@ func (n *Node) query(key uint64) (index *Index, err error) {
 }
 
 func (n *Node) insert(i *Index) (err error) {
-	//TODO: Handle if the index is already in the node then throw an error
 	if n.nodeIsFull() {
 		next, err := n.splitIntoTwoSubnodes()
 		if err != nil {
@@ -256,6 +264,9 @@ func (n *Node) readRightPtr(index int) (newNode *Node, err error) {
 	return n.readLeftPtr(index + 1)
 }
 
+// IsValidAddress indicates if the given value is a valid node address
+// nodes are ussualy 752 bytes in lenght and therefore addresses occur
+// every 752 bytes.
 func IsValidAddress(addr int64) bool {
 	if addr >= 0 && addr%752 == 0 {
 		return true
