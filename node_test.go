@@ -45,6 +45,42 @@ func TestInsertIndexAt(t *testing.T) {
 	}
 }
 
+func TestNodeSize(t *testing.T) {
+	dir := os.TempDir()
+	f := path.Join(dir, "test-node-size.bin")
+	//f = "test-node-size.bin"
+	tree, err := NewBTreeOnDisk(f)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	n, err := tree.NewNode()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	s := n.size()
+	if s != 0 {
+		t.Errorf("node size was supposed to be zero but was actually %v", s)
+	}
+
+	testKeys := []uint64{2, 4, 5, 8, 10, 67, 89}
+	for _, key := range testKeys {
+		err = n.insert(NewIndex(key, 1))
+		if err != nil {
+			t.Error(err)
+			return
+		}
+	}
+
+	s = n.size()
+	if s != 7 {
+		t.Errorf("node size was supposed to be seven but was actually %v", s)
+	}
+}
+
 func TestToBinary(t *testing.T) {
 	tree := new(BTreeOnDisk)
 
@@ -137,27 +173,6 @@ func TestNodeIsFull(t *testing.T) {
 
 	if !n.nodeIsFull() {
 		t.Error("node is full but reports as not full")
-	}
-}
-
-func TestNodeSize(t *testing.T) {
-	tree := new(BTreeOnDisk)
-	n, err := NewNode(tree)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if n.size() != 0 {
-		t.Errorf("node size should be zero but is actually %v", n.size())
-	}
-
-	n.Data[0] = Index{Key: 324, Pointer: 2}
-	n.Data[1] = Index{Key: 325, Pointer: 2}
-	n.Data[2] = Index{Key: 327, Pointer: 2}
-	n.Data[3] = Index{Key: 343, Pointer: 2}
-
-	if n.size() != 4 {
-		t.Errorf("node size should be 4 but is actually %v", n.size())
 	}
 }
 

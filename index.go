@@ -5,6 +5,14 @@ type Index struct {
 	Pointer int64
 }
 
+func NewIndex(key uint64, pointer int64) *Index {
+	i := Index{
+		key,
+		pointer,
+	}
+	return &i
+}
+
 func (i *Index) isEmptyOrDefault() bool {
 	if i.Key == 0 && i.Pointer == 0 {
 		return true

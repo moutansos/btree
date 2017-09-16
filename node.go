@@ -219,7 +219,7 @@ func (n *Node) findMedianDataPoint() (medianIndex int, err error) {
 	return medianIndex, nil
 }
 
-func (n *Node) size() int { //TODO: Write test
+func (n *Node) size() int {
 	for i, el := range n.Data {
 		if el.Key == 0 {
 			return i
@@ -238,12 +238,12 @@ func (n *Node) nodeIsFull() bool {
 }
 
 func (n *Node) clear() {
-	for i, _ := range n.Data {
+	for i := 0; i < len(n.Data); i++ {
 		n.Data[i].Key = 0
 		n.Data[i].Pointer = 0
 	}
 
-	for i, _ := range n.Pointers {
+	for i := 0; i < len(n.Pointers); i++ {
 		n.Pointers[i] = 0
 	}
 }
