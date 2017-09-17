@@ -114,7 +114,7 @@ func (n *Node) insert(i *Index) (err error) {
 			//Insert or recurse if the data goes to the left of the current value
 			if n.Pointers[x] == 0 { //Insert into this node
 				n.insertThisNodeLeft(i, x)
-				return nil
+				return n.Write()
 			}
 			//Recurse
 			nn, err := n.readLeftPtr(x)
@@ -127,7 +127,7 @@ func (n *Node) insert(i *Index) (err error) {
 			// is greater than the current key, then insert or recurse
 			if n.Pointers[x+1] == 0 { //Insert into this node
 				n.insertThisNodeRight(i, x)
-				return nil
+				return n.Write()
 			}
 			//Recurse
 			nn, err := n.readRightPtr(x)
@@ -143,12 +143,12 @@ func (n *Node) insert(i *Index) (err error) {
 	return fmt.Errorf("there was an internal logic error inserting into this node, key of inserting index: %v, first data key in node: %v", i.Key, n.Data[0].Key)
 }
 
-func (n *Node) insertThisNodeLeft(i *Index, o int) { //TODO: Write Test?
+func (n *Node) insertThisNodeLeft(i *Index, o int) {
 	n.Data = insertIndexAt(n.Data, o, *i)
 	n.Pointers = insertInt64at(n.Pointers, o, 0)
 }
 
-func (n *Node) insertThisNodeRight(i *Index, o int) { //TODO: Write Test?
+func (n *Node) insertThisNodeRight(i *Index, o int) {
 	n.Data = insertIndexAt(n.Data, o+1, *i)
 	n.Pointers = insertInt64at(n.Pointers, o+1, 0)
 }

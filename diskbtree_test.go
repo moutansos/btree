@@ -1,9 +1,11 @@
 package btree
 
 import (
+	"math/rand"
 	"os"
 	"path"
 	"testing"
+	"time"
 )
 
 func TestNewBTreeOnDisk(t *testing.T) {
@@ -335,5 +337,39 @@ func TestQueryIndex(t *testing.T) {
 		t.Errorf("the query function returned the wrong key of %v. Expected 70", index.Key)
 	} else if index.Pointer != 26 {
 		t.Errorf("the query function returned the wrong pointer of %v. Expected 26", index.Pointer)
+	}
+}
+
+func TestInsertTreeOnDiskIndex(t *testing.T) {
+	//f := path.Join(os.TempDir(), "test-insert-index.bin")
+	f := "test-insert-index.bin"
+
+	//removeFileIfExists(f)
+
+	//Create test data in the tree
+	tree, err := NewBTreeOnDisk(f)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	for i := 0; i < 20000; i++ {
+		rand.Seed(time.Now().UTC().UnixNano())
+		key := uint64(rand.Uint32())<<32 + uint64(rand.Uint32())
+
+		index := Index{Key: key, Pointer: 45}
+		err = tree.InsertIndex(&index)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+	}
+
+}
+
+func removeFileIfExists(fileName string) {
+	_, err := os.Stat(fileName)
+	if os.IsNotExist(err) {
+		os.Remove(fileName)
 	}
 }

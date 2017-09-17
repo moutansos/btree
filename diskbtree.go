@@ -23,6 +23,16 @@ func NewBTreeOnDisk(file string) (t *BTreeOnDisk, err error) {
 
 	_, err = os.Stat(file)
 	if os.IsNotExist(err) {
+		n, err := NewNode(t)
+		if err != nil {
+			return nil, err
+		}
+
+		err = n.Write()
+		if err != nil {
+			return nil, err
+		}
+
 		return t, nil
 	}
 
@@ -219,4 +229,12 @@ func (t *BTreeOnDisk) QueryIndex(key uint64) (index *Index, err error) {
 		return n.query(key)
 	}
 	return nil, fmt.Errorf("the b-tree is empty")
+}
+
+func (t *BTreeOnDisk) InsertIndex(index *Index) (err error) {
+	n, err := t.ReadNode(0)
+	if err != nil {
+		return err
+	}
+	return n.insert(index)
 }
