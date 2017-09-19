@@ -353,7 +353,7 @@ func TestInsertTreeOnDiskIndex(t *testing.T) {
 		return
 	}
 
-	for i := 0; i < 20000; i++ {
+	for i := 0; i < 100; i++ {
 		rand.Seed(time.Now().UTC().UnixNano())
 		key := uint64(rand.Uint32())<<32 + uint64(rand.Uint32())
 

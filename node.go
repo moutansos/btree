@@ -98,6 +98,7 @@ func (n *Node) query(key uint64) (index *Index, err error) {
 }
 
 func (n *Node) insert(i *Index) (err error) {
+	//TODO: Increase insert performance
 	if n.nodeIsFull() {
 		next, err := n.splitIntoTwoSubnodes()
 		if err != nil {
@@ -106,7 +107,7 @@ func (n *Node) insert(i *Index) (err error) {
 		return next.insert(i)
 	} else if n.IsEmpty() {
 		n.Data[0] = *i
-		return nil
+		return n.Write()
 	}
 
 	for x, d := range n.Data {
