@@ -341,10 +341,10 @@ func TestQueryIndex(t *testing.T) {
 }
 
 func TestInsertTreeOnDiskIndex(t *testing.T) {
-	//f := path.Join(os.TempDir(), "test-insert-index.bin")
-	f := "test-insert-index.bin"
+	f := path.Join(os.TempDir(), "test-insert-index.bin")
+	//f := "test-insert-index.bin"
 
-	//removeFileIfExists(f)
+	removeFileIfExists(f)
 
 	//Create test data in the tree
 	tree, err := NewBTreeOnDisk(f)
@@ -369,7 +369,7 @@ func TestInsertTreeOnDiskIndex(t *testing.T) {
 
 func removeFileIfExists(fileName string) {
 	_, err := os.Stat(fileName)
-	if os.IsNotExist(err) {
+	if !os.IsNotExist(err) {
 		os.Remove(fileName)
 	}
 }
