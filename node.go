@@ -286,3 +286,14 @@ func insertIndexAt(ara [31]Index, i int, val Index) [31]Index {
 	ara[i] = val
 	return ara
 }
+
+func removeInt64at(ara [32]int64, i int, val int64) [32]int64 { //TODO: Write Test
+	s := append(ara[:i], ara[i+1:]...)
+	newAra := new([32]int64)
+	for o, e := range s {
+		newAra[o] = e
+	}
+	return *newAra
+}
+
+//TODO: removeIndexAt()
