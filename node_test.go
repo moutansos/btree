@@ -77,6 +77,38 @@ func TestRemoveInt64at(t *testing.T) {
 
 }
 
+func TestRemoveIndexAt(t *testing.T) {
+	var ara [31]Index
+	ara[0] = Index{Key: 12}
+	ara[1] = Index{Key: 59}
+	ara[2] = Index{Key: 48}
+	ara[3] = Index{Key: 45}
+	ara[4] = Index{Key: 392}
+	ara[5] = Index{Key: 323}
+
+	ara = removeIndexAt(ara, 2)
+	if ara[0].Key != 12 ||
+		ara[1].Key != 59 ||
+		ara[2].Key != 45 ||
+		ara[3].Key != 392 ||
+		ara[4].Key != 323 ||
+		ara[5].Key != 0 {
+		t.Errorf("the array is not valid, first removal: %v", ara)
+		return
+	}
+
+	ara = removeIndexAt(ara, 0)
+	if ara[0].Key != 59 ||
+		ara[1].Key != 45 ||
+		ara[2].Key != 392 ||
+		ara[3].Key != 323 ||
+		ara[4].Key != 0 {
+		t.Errorf("the array is not valid, second removal: %v", ara)
+		return
+	}
+
+}
+
 func TestNodeSize(t *testing.T) {
 	dir := os.TempDir()
 	f := path.Join(dir, "test-node-size.bin")
