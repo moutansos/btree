@@ -287,7 +287,7 @@ func insertIndexAt(ara [31]Index, i int, val Index) [31]Index {
 	return ara
 }
 
-func removeInt64at(ara [32]int64, i int, val int64) [32]int64 { //TODO: Write Test
+func removeInt64at(ara [32]int64, i int) [32]int64 {
 	s := append(ara[:i], ara[i+1:]...)
 	newAra := new([32]int64)
 	for o, e := range s {
@@ -296,4 +296,11 @@ func removeInt64at(ara [32]int64, i int, val int64) [32]int64 { //TODO: Write Te
 	return *newAra
 }
 
-//TODO: removeIndexAt()
+func removeIndexAt(ara [31]Index, i int) [31]Index {
+	s := append(ara[:i], ara[i+1:]...)
+	newAra := new([31]Index)
+	for o, e := range s {
+		newAra[o] = e
+	}
+	return *newAra
+}
