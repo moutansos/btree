@@ -5,6 +5,7 @@ type Index struct {
 	Pointer int64
 }
 
+// NewIndex creates a new key/pointer index pair for the b-tree structure
 func NewIndex(key uint64, pointer int64) *Index {
 	i := Index{
 		key,

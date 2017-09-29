@@ -173,6 +173,8 @@ func (t *BTreeOnDisk) AddressIsAvailable(addr int64) (available bool, err error)
 	return false, nil
 }
 
+// NextNodeAddress gets the next available address for a node for insertion.
+// This is after the last node or in a spot of a deleted node.
 func (t *BTreeOnDisk) NextNodeAddress() (int64, error) {
 	if len(t.AvailableAddresses) > 0 {
 		val := t.AvailableAddresses[0]
