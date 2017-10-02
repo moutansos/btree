@@ -97,6 +97,27 @@ func (n *Node) query(key uint64) (index *Index, err error) {
 	return nil, fmt.Errorf("The key was not found in the b-tree")
 }
 
+func (n *Node) remove(key uint64) (err error) {
+	for i, d := range n.Data {
+		if key < d.Key {
+			nn, err := n.readLeftPtr(i)
+			if err != nil {
+				return err
+			}
+			return nn.remove(key)
+		} else if (n.Data[i+1].isEmptyOrDefault() || len(n.Data) == i+1) && key > d.Key {
+			nn, err := n.readRightPtr(i)
+			if err != nil {
+				return err
+			}
+			return nn.remove(key)
+		} else if key == d.Key {
+			//TODO: Remove here
+		}
+	}
+	return fmt.Errorf("The key was not found in the b-tree")
+}
+
 func (n *Node) insert(i *Index) (err error) {
 	//TODO: Increase insert performance
 	if n.nodeIsFull() {
